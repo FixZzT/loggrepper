@@ -16,3 +16,6 @@ def test_create_incident():
         lines=[linea],
         matches=[0]
     )
+    assert incident.id == 1
+    assert incident.lines == [linea]
+    assert incident.matches == [0]

@@ -1,0 +1,21 @@
+name: Feature request
+description: Sugiere una funcionalidad para loggrepper
+labels: [enhancement]
+body:
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problema o necesidad
+      description: Que problema resuelve esta funcionalidad
+    validations:
+      required: true
+  - type: textarea
+    id: solution
+    attributes:
+      label: Propuesta
+      description: Como te gustaria que funcionara
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternativas consideradas
+      description: Que otras soluciones has probado o pensado

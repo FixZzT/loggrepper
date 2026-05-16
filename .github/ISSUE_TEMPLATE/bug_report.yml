@@ -1,0 +1,27 @@
+name: Bug report
+description: Reporta un bug en loggrepper
+labels: [bug]
+body:
+  - type: textarea
+    id: description
+    attributes:
+      label: Descripcion del bug
+      description: Que paso y que esperabas que pasara
+    validations:
+      required: true
+  - type: textarea
+    id: repro
+    attributes:
+      label: Pasos para reproducir
+      description: Comando exacto, archivo de entrada, output obtenido
+      render: bash
+  - type: input
+    id: version
+    attributes:
+      label: Version de loggrepper
+      description: `loggrepper --version`
+  - type: input
+    id: python
+    attributes:
+      label: Version de Python
+      description: `python --version`

@@ -37,14 +37,29 @@ pipx install git+https://github.com/FixZzT/loggrepper.git
 # Básico
 loggrepper ERROR app.log
 
+# Múltiples patrones (OR)
+loggrepper ERROR FATAL CRITICAL app.log
+
 # Ventana de 5 segundos
 loggrepper ERROR app.log -w 5
+
+# Limitar a 10 incidentes
+loggrepper ERROR app.log -n 10
+
+# Excluir líneas ruidosas
+loggrepper ERROR app.log -e "heartbeat\|healthcheck"
+
+# Solo estadísticas
+loggrepper ERROR app.log -o stats
 
 # Salida JSON para scripts
 loggrepper ERROR app.log -o json | jq '.[] | {start, end, line_count}'
 
 # Formato de timestamp específico
 loggrepper "404" nginx-access.log --ts-format nginx
+
+# Seguir en vivo (como tail -f)
+loggrepper ERROR app.log -f
 
 # Pipe desde docker/k8s
 docker logs mi-app 2>&1 | loggrepper FATAL -
@@ -112,16 +127,19 @@ Con `--ts-format auto` (default) detecta automáticamente el formato analizando 
     2026-05-16 14:32:02.000 DEBUG conexión exitosa
 ```
 
-`>>>` marca las líneas que coinciden con el patrón. Cada incidente muestra rango temporal y cantidad de líneas.
+`>>>` marca las líneas que coinciden con el patrón (en rojo con `rich`). Cada incidente muestra rango temporal y cantidad de líneas.
 
 **JSON**: cada incidente con id, start, end, líneas con número, texto y flag `match`.
+
+**Stats**: resumen con total de incidentes, líneas, matches y rango temporal.
 
 ## Desarrollo
 
 ```bash
 python -m venv .venv
 source .venv/bin/activate
-pip install -e .
-pytest            # 14 tests
+pip install -e ".[dev]"
+pytest                    # 25 tests
 ruff check src/ tests/
+mypy src/
 ```

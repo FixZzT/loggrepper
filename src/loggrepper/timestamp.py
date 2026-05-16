@@ -8,7 +8,7 @@ from dataclasses import dataclass
 class TimestampFormat:
     """Define como extraer y parsear un timestamp de una linea."""
     name: str
-    regex: Pattern
+    regex: Pattern[str]
     format_str: str
     position: Literal["start", "anywhere"]
 
