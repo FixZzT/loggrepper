@@ -1,0 +1,6 @@
+2026-05-16 14:32:00.100 INFO  inicio del proceso
+2026-05-16 14:32:00.500 DEBUG consultando base de datos
+2026-05-16 14:32:01.123 ERROR timeout en conexion
+2026-05-16 14:32:01.200 WARN  reintentando (1/3)
+2026-05-16 14:32:02.000 DEBUG conexion exitosa
+2026-05-16 14:32:05.000 INFO  fin del proceso

@@ -1,0 +1,16 @@
+[build-system]
+requires = ["setuptools>=75"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "loggrepper"
+version = "0.1.0"
+description = "grep contextual para logs con ventanas de tiempo"
+requires-python = ">=3.10"
+dependencies = [
+    "click>=8",
+    "rich>=13",
+]
+
+[project.scripts]
+loggrepper = "loggrepper.cli:main"
