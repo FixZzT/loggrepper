@@ -1,5 +1,10 @@
 # loggrepper
 
+[![CI](https://github.com/FixZzT/loggrepper/actions/workflows/ci.yml/badge.svg)](https://github.com/FixZzT/loggrepper/actions/workflows/ci.yml)
+[![Python](https://img.shields.io/pypi/pyversions/loggrepper.svg)](https://pypi.org/project/loggrepper/)
+[![PyPI](https://img.shields.io/pypi/v/loggrepper.svg)](https://pypi.org/project/loggrepper/)
+[![License](https://img.shields.io/github/license/FixZzT/loggrepper.svg)](https://github.com/FixZzT/loggrepper/blob/master/LICENSE)
+
 grep contextual para logs. Extrae ventanas de tiempo alrededor de matches en archivos de log — no por número de líneas, sino por timestamps.
 
 ## El problema
