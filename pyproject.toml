@@ -6,11 +6,21 @@ build-backend = "setuptools.build_meta"
 name = "loggrepper"
 version = "0.1.0"
 description = "grep contextual para logs con ventanas de tiempo"
+readme = "README.md"
+license = "MIT"
+authors = [
+    {name = "Matias Atuan", email = "matiasatuan.2018@gmail.com"},
+]
 requires-python = ">=3.10"
 dependencies = [
     "click>=8",
     "rich>=13",
 ]
+
+[project.urls]
+Homepage = "https://github.com/FixZzT/loggrepper"
+Repository = "https://github.com/FixZzT/loggrepper"
+Issues = "https://github.com/FixZzT/loggrepper/issues"
 
 [project.scripts]
 loggrepper = "loggrepper.cli:main"
