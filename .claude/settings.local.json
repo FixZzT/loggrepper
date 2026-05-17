@@ -1,0 +1,14 @@
+{
+  "permissions": {
+    "allow": [
+      "Read(//home/mxtinm/.config/omarchy/**)",
+      "Read(//home/mxtinm/.config/waybar/**)",
+      "Read(//home/mxtinm/.local/share/omarchy/default/waybar/**)",
+      "Bash(omarchy --help)",
+      "Bash(omarchy theme *)",
+      "Bash(hyprctl monitors *)",
+      "Bash(git reset *)",
+      "Bash(git remote *)"
+    ]
+  }
+}
