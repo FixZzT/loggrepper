@@ -133,6 +133,35 @@ Con `--ts-format auto` (default) detecta automáticamente el formato analizando 
 
 **Stats**: resumen con total de incidentes, líneas, matches y rango temporal.
 
+## Versiones
+
+### [0.3.0]
+- `--before` / `--after`: ventanas asimetricas de contexto
+- `--no-color`: desactivar colores en salida pretty
+- `--idle-timeout`: salir tras N segundos sin datos en modo `--follow`
+- `-o ndjson`: salida NDJSON (un JSON por linea, streaming-friendly)
+- Soporte para archivos comprimidos: `.gz`, `.bz2`, `.xz`
+- `--version`: mostrar version de la herramienta
+- API publica, PEP 561 (`py.typed`), test coverage threshold en CI
+- Fix: buffer de pendientes truncado a 10000 lineas, validacion epoch-ms
+
+### [0.2.0]
+- Multi-patron: soporte para multiples patrones de busqueda simultaneos
+- `--exclude` / `-e`: filtrar lineas con patron regex
+- `--max-incidents` / `-n`: limitar cantidad de incidentes mostrados
+- `--follow` / `-f`: modo tail -f para leer nuevas lineas en tiempo real
+- `-o stats`: resumen estadistico en vez de incidentes individuales
+- Colores con `rich` en salida pretty
+- Stdin via `-` como nombre de archivo
+- CI: mypy type checking, pytest-cov coverage, PyPI publish en tag
+
+### [0.1.0]
+- Primer release publico
+- Busqueda con ventanas de tiempo reales (no lineas)
+- 5 formatos de timestamp: iso8601, iso8601-t, syslog, nginx, epoch-ms
+- Auto-deteccion de formato, output pretty y JSON
+- CI matrix Python 3.10–3.14 + ruff lint
+
 ## Desarrollo
 
 ```bash

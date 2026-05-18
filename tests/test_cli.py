@@ -77,7 +77,7 @@ class TestOutputFormats:
             f.flush()
             result = runner.invoke(main, ["ERROR", f.name, "-o", "json"])
         assert result.exit_code == 0
-        data = json.loads(result.output)
+        data = json.loads(result.stdout)
         assert len(data) == 1
         assert data[0]["id"] == 1
 
@@ -89,7 +89,7 @@ class TestOutputFormats:
             f.flush()
             result = runner.invoke(main, ["ERROR", f.name, "-o", "ndjson"])
         assert result.exit_code == 0
-        lines = result.output.strip().split("\n")
+        lines = result.stdout.strip().split("\n")
         assert len(lines) == 2
         for line in lines:
             data = json.loads(line)
@@ -102,7 +102,7 @@ class TestOutputFormats:
             f.flush()
             result = runner.invoke(main, ["ERROR", f.name, "-o", "stats"])
         assert result.exit_code == 0
-        assert "Incidentes encontrados" in result.output
+        assert "Incidentes encontrados" in result.stdout
 
 
 class TestNoColor:
@@ -186,7 +186,7 @@ class TestBeforeAfter:
         runner = CliRunner()
         with tempfile.NamedTemporaryFile(mode="w", suffix=".log", delete=False) as f:
             f.write("2026-05-16 14:31:55.100 INFO  muy antes\n")
-            f.write("2026-05-16 14:31:59.100 INFO  justo antes\n")
+            f.write("2026-05-16 14:31:59.200 INFO  justo antes\n")
             f.write("2026-05-16 14:32:01.123 ERROR timeout\n")
             f.write("2026-05-16 14:32:02.000 DEBUG justo despues\n")
             f.write("2026-05-16 14:32:05.000 DEBUG muy despues\n")

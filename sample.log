@@ -1,6 +1,14 @@
-2026-05-16 14:32:00.100 INFO  inicio del proceso
-2026-05-16 14:32:00.500 DEBUG consultando base de datos
-2026-05-16 14:32:01.123 ERROR timeout en conexion
-2026-05-16 14:32:01.200 WARN  reintentando (1/3)
-2026-05-16 14:32:02.000 DEBUG conexion exitosa
-2026-05-16 14:32:05.000 INFO  fin del proceso
+2026-05-16 14:31:55.000 INFO  servidor iniciado en puerto 8080
+2026-05-16 14:31:55.100 DEBUG cargando configuracion desde /etc/app.toml
+2026-05-16 14:32:00.100 INFO  aceptando conexiones
+2026-05-16 14:32:00.500 DEBUG consultando base de datos maestra
+2026-05-16 14:32:01.123 ERROR timeout en conexion a postgres — 30s sin respuesta
+2026-05-16 14:32:01.200 WARN  reintentando conexion (1/3)
+2026-05-16 14:32:01.500 DEBUG pool: activas=12, inactivas=3, pendientes=5
+2026-05-16 14:32:02.000 DEBUG conexion exitosa a postgres
+2026-05-16 14:32:02.100 FATAL error irrecuperable en worker-4: segmentation fault
+2026-05-16 14:32:02.150 ERROR worker-4 detenido inesperadamente, reiniciando
+2026-05-16 14:32:03.000 INFO  worker-4 reiniciado correctamente
+2026-05-16 14:32:05.000 INFO  heartbeat: servicio operativo
+2026-05-16 14:32:05.500 DEBUG cache: 342 keys, 98% hit rate
+2026-05-16 14:32:10.000 INFO  fin del proceso — 14 conexiones procesadas

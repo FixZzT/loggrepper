@@ -17,7 +17,7 @@ from loggrepper.grouper import group_incidents
 from loggrepper.models import LogLine
 from loggrepper.timestamp import BUILTIN_FORMATS, TimestampFormat, detect_format, extract_timestamp
 
-console = Console(highlight=False)
+console = Console(highlight=False, soft_wrap=False)
 
 
 def _read_stream(file: str) -> tuple[TextIO, bool]:
@@ -73,7 +73,7 @@ def _timestamped_lines(
 
 
 @click.command()
-@click.version_option(version="0.3.0", package_name="loggrepper")
+@click.version_option(version="0.3.0", prog_name="loggrepper")
 @click.argument("patterns", nargs=-1, required=True)
 @click.argument("file", type=click.Path())
 @click.option("--window", "-w", default=3, type=int, help="Ventana en segundos alrededor del match")
@@ -197,23 +197,25 @@ def main(
         timestamped = _timestamped_lines(raw_lines, fmt, compiled_patterns, exclude_pat)
         incidents = group_incidents(timestamped, before_td, after_td)
 
+        echo = console.print if output == "pretty" else click.echo
+
         shown = 0
         for inc in incidents:
             if max_incidents is not None and shown >= max_incidents:
                 break
             output_str = formatter.format_one(inc)
             if output_str:
-                console.print(output_str)
+                echo(output_str)
             shown += 1
 
         if shown == 0:
             msg = formatter.format_empty()
             if msg:
-                console.print(msg)
+                echo(msg)
 
         flushed = formatter.flush()
         if flushed:
-            console.print(flushed)
+            echo(flushed)
     finally:
         if should_close:
             stream.close()

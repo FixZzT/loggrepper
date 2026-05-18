@@ -123,7 +123,7 @@ class TestAsymmetricWindows:
         assert len(incidents) == 1
         assert len(incidents[0].lines) == 4
         assert "muy antes" in incidents[0].lines[0].raw
-        assert "muy despues" not in [l.raw for l in incidents[0].lines]
+        assert "muy despues" not in [line.raw for line in incidents[0].lines]
 
     def test_more_after_than_before(self):
         """after > before: mas contexto adelante que atras."""
@@ -139,7 +139,7 @@ class TestAsymmetricWindows:
         incidents = list(group_incidents(items, before, after))
         assert len(incidents) == 1
         assert len(incidents[0].lines) == 4
-        assert "muy antes" not in [l.raw for l in incidents[0].lines]
+        assert "muy antes" not in [line.raw for line in incidents[0].lines]
         assert "muy despues" in incidents[0].lines[-1].raw
 
 

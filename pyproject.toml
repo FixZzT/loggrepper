@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "loggrepper"
-version = "0.2.0"
+version = "0.3.0"
 description = "grep contextual para logs con ventanas de tiempo"
 readme = "README.md"
 license = "MIT"
