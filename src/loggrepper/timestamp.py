@@ -21,7 +21,10 @@ def extract_timestamp(line: str, formats: list[TimestampFormat]) -> datetime | N
             ts_str = match.group(0)
             if fmt.name == "epoch-ms":
                 try:
-                    return datetime.fromtimestamp(int(ts_str) / 1000)
+                    dt = datetime.fromtimestamp(int(ts_str) / 1000)
+                    if dt.year < 2000 or dt.year > 2100:
+                        continue
+                    return dt
                 except (ValueError, OSError):
                     continue
             try:
@@ -46,7 +49,7 @@ def detect_format(lines: list[str]) -> TimestampFormat | None:
 
 ISO8601 = TimestampFormat(
     name="iso8601",
-    regex=compile(r"\d{4}-\d{2}-\d{2}[T ]\d{2}:\d{2}:\d{2}(?:\.\d{3,6})?(?:[+-]\d{2}:?\d{2}|Z)?"),
+    regex=compile(r"\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}(?:\.\d{3,6})?(?:[+-]\d{2}:?\d{2}|Z)?"),
     format_str="%Y-%m-%d %H:%M:%S.%f",
     position="anywhere",
 )

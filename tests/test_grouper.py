@@ -2,9 +2,11 @@ from datetime import datetime, timedelta
 from loggrepper.grouper import group_incidents
 from loggrepper.models import LogLine
 
+_BASE = datetime(2026, 5, 16, 14, 32, 0)
 
-def _ts(sec: int) -> datetime:
-    return datetime(2026, 5, 16, 14, 32, sec)
+
+def _ts(offset_sec: float) -> datetime:
+    return _BASE + timedelta(seconds=offset_sec)
 
 
 def _line(num: int, text: str) -> LogLine:
@@ -19,7 +21,7 @@ class TestSingleMatch:
             (LogLine(2, "ERROR: boom"), _ts(0), True),
             (LogLine(3, "DEBUG: despues"), _ts(2), False),
         ])
-        incidents = list(group_incidents(items, window))
+        incidents = list(group_incidents(items, window, window))
         assert len(incidents) == 1
         assert incidents[0].id == 1
         assert len(incidents[0].lines) == 3
@@ -31,7 +33,7 @@ class TestSingleMatch:
             (LogLine(1, "ERROR: boom"), _ts(0), True),
             (LogLine(2, "DEBUG: muy lejos"), _ts(5), False),
         ])
-        incidents = list(group_incidents(items, window))
+        incidents = list(group_incidents(items, window, window))
         assert len(incidents) == 1
         assert len(incidents[0].lines) == 1
 
@@ -46,7 +48,7 @@ class TestWindowOverlap:
             (LogLine(3, "ERROR: segundo"), _ts(3), True),  # dentro de ventana del primero
             (LogLine(4, "DEBUG: final"), _ts(5), False),
         ])
-        incidents = list(group_incidents(items, window))
+        incidents = list(group_incidents(items, window, window))
         assert len(incidents) == 1
         assert len(incidents[0].lines) == 4
         assert len(incidents[0].matches) == 2
@@ -60,7 +62,7 @@ class TestWindowOverlap:
             (LogLine(3, "ERROR: segundo"), _ts(10), True),  # fuera de ventana
             (LogLine(4, "INFO: ok2"), _ts(11), False),
         ])
-        incidents = list(group_incidents(items, window))
+        incidents = list(group_incidents(items, window, window))
         assert len(incidents) == 2
         assert incidents[0].id == 1
         assert incidents[1].id == 2
@@ -74,7 +76,7 @@ class TestPendingBuffer:
             (LogLine(1, "DEBUG: antes"), _ts(57), False),  # -3s del match
             (LogLine(2, "ERROR: boom"), _ts(0), True),
         ])
-        incidents = list(group_incidents(items, window))
+        incidents = list(group_incidents(items, window, window))
         assert len(incidents) == 1
         assert len(incidents[0].lines) == 2
 
@@ -87,7 +89,7 @@ class TestPendingBuffer:
             (LogLine(1, "DEBUG: muy antes"), old_ts, False),
             (LogLine(2, "ERROR: boom"), _ts(0), True),
         ])
-        incidents = list(group_incidents(items, window))
+        incidents = list(group_incidents(items, window, window))
         assert len(incidents) == 1
         assert len(incidents[0].lines) == 1
         assert incidents[0].lines[0].raw == "ERROR: boom"
@@ -101,8 +103,57 @@ class TestPendingBuffer:
             (LogLine(3, "DEBUG: fuera de ventana"), _ts(3), False),  # en end del incidente, no se incluye
             (LogLine(4, "ERROR: match2"), _ts(10), True),
         ])
-        incidents = list(group_incidents(items, window))
+        incidents = list(group_incidents(items, window, window))
         assert len(incidents) == 2
+
+
+class TestAsymmetricWindows:
+    def test_more_before_than_after(self):
+        """before > after: mas contexto atras que adelante."""
+        before = timedelta(seconds=5)
+        after = timedelta(seconds=1)
+        items = iter([
+            (LogLine(1, "DEBUG: muy antes"), _ts(-5), False),
+            (LogLine(2, "DEBUG: justo antes"), _ts(-2), False),
+            (LogLine(3, "ERROR: boom"), _ts(0), True),
+            (LogLine(4, "DEBUG: justo despues"), _ts(0.5), False),
+            (LogLine(5, "DEBUG: muy despues"), _ts(3), False),
+        ])
+        incidents = list(group_incidents(items, before, after))
+        assert len(incidents) == 1
+        assert len(incidents[0].lines) == 4
+        assert "muy antes" in incidents[0].lines[0].raw
+        assert "muy despues" not in [l.raw for l in incidents[0].lines]
+
+    def test_more_after_than_before(self):
+        """after > before: mas contexto adelante que atras."""
+        before = timedelta(seconds=1)
+        after = timedelta(seconds=5)
+        items = iter([
+            (LogLine(1, "DEBUG: muy antes"), _ts(-5), False),
+            (LogLine(2, "DEBUG: justo antes"), _ts(-0.5), False),
+            (LogLine(3, "ERROR: boom"), _ts(0), True),
+            (LogLine(4, "DEBUG: justo despues"), _ts(2), False),
+            (LogLine(5, "DEBUG: muy despues"), _ts(4), False),
+        ])
+        incidents = list(group_incidents(items, before, after))
+        assert len(incidents) == 1
+        assert len(incidents[0].lines) == 4
+        assert "muy antes" not in [l.raw for l in incidents[0].lines]
+        assert "muy despues" in incidents[0].lines[-1].raw
+
+
+class TestPendingLimit:
+    def test_buffer_truncated_when_exceeded(self):
+        """El buffer de pendientes se trunca al exceder _MAX_PENDING."""
+        from loggrepper.grouper import _MAX_PENDING
+        before = timedelta(seconds=3)
+        after = timedelta(seconds=3)
+        items = [(LogLine(i, f"INFO: linea {i}"), _ts(float(i)), False) for i in range(_MAX_PENDING + 100)]
+        items.append((LogLine(_MAX_PENDING + 100, "ERROR: boom"), _ts(float(_MAX_PENDING + 100)), True))
+        incidents = list(group_incidents(iter(items), before, after))
+        assert len(incidents) == 1
+        assert incidents[0].lines[0].number > 1
 
 
 class TestNoMatches:
@@ -114,5 +165,5 @@ class TestNoMatches:
             (LogLine(2, "INFO: linea2"), _ts(1), False),
             (LogLine(3, "INFO: linea3"), _ts(2), False),
         ])
-        incidents = list(group_incidents(items, window))
+        incidents = list(group_incidents(items, window, window))
         assert len(incidents) == 0

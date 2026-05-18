@@ -8,7 +8,8 @@
       "Bash(omarchy theme *)",
       "Bash(hyprctl monitors *)",
       "Bash(git reset *)",
-      "Bash(git remote *)"
+      "Bash(git remote *)",
+      "Bash(git tag *)"
     ]
   }
 }

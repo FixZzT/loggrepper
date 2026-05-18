@@ -1,7 +1,7 @@
 import json
 from datetime import datetime
 
-from loggrepper.formatter import PrettyFormatter, JsonFormatter, StatsFormatter
+from loggrepper.formatter import PrettyFormatter, JsonFormatter, StatsFormatter, NdjsonFormatter
 from loggrepper.models import Incident, LogLine
 
 
@@ -81,3 +81,36 @@ class TestStatsFormatter:
         assert "Incidentes encontrados: 2" in flushed
         assert "Lineas en incidentes:   4" in flushed
         assert "Lineas con match:       2" in flushed
+
+
+class TestPrettyFormatterNoColor:
+    def test_no_rich_markup(self):
+        fmt = PrettyFormatter(color=False)
+        result = fmt.format_one(_make_incident())
+        assert "bold red" not in result
+        assert "bold cyan" not in result
+        assert "dim" not in result
+        assert ">>>" in result
+        assert "Incidente #1" in result
+        assert "ERROR: boom" in result
+
+    def test_flush_returns_empty(self):
+        fmt = PrettyFormatter(color=False)
+        assert fmt.flush() == ""
+
+
+class TestNdjsonFormatter:
+    def test_empty(self):
+        result = NdjsonFormatter().format_empty()
+        assert result == ""
+
+    def test_single_incident(self):
+        fmt = NdjsonFormatter()
+        result = fmt.format_one(_make_incident())
+        data = json.loads(result)
+        assert data["id"] == 1
+        assert data["line_count"] == 3
+        assert data["lines"][1]["match"] is True
+
+    def test_flush_returns_empty(self):
+        assert NdjsonFormatter().flush() == ""
